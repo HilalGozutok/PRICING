@@ -6,7 +6,7 @@
 # 1.Veri Hazırlama
 ############################################
 
-#import libraries
+#Gerekli kütüphaneler import edildi.
 import pandas as pd
 import itertools
 import statsmodels.stats.api as sms
@@ -16,11 +16,11 @@ from helpers.helpers import replace_with_thresholds,check_df,analysis_df, outlie
 pd.set_option('display.max_columns', None)
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 
-# veri seti okuma
+# Veri seti okuma
 df = pd.read_csv(r'C:\Users\LENOVO\PycharmProjects\DSMLBC4\HAFTA_05\pricing.csv', sep=";")
 analysis_df(df)
 
-# Shapiro testi ile normallik varsayımı test edilidi.
+# Shapiro testi ile normallik varsayımı test edildi.
 print(" Shapiro Test Sonucu")
 for category in df["category_id"].unique():
     test_statistic , pvalue = shapiro(df.loc[df["category_id"] ==  category,"price"])
@@ -37,7 +37,7 @@ for category in df["category_id"].unique():
 #675201 ->  Test statistic = 0.1011, p-Value = 0.0000 H0 RED.
 #201436 ->  Test statistic = 0.6190, p-Value = 0.0000 H0 RED.
 
-#Aykırı değerler için alt limit ve üst limitin belirlenmesi.
+# Aykırı değerler için alt limit ve üst limit belirlendi.
 def outlier_thresholds(dataframe, variable, low_quantile=0.05, up_quantile=0.95):
     quantile_one = dataframe[variable].quantile(low_quantile)
     quantile_three = dataframe[variable].quantile(up_quantile)
@@ -46,7 +46,7 @@ def outlier_thresholds(dataframe, variable, low_quantile=0.05, up_quantile=0.95)
     low_limit = quantile_one - 1.5 * interquantile_range
     return low_limit, up_limit
 
-#Price değişkeni için eşik değerleri belirlendi.
+# Price değişkeni için eşik değerleri belirlendi.
 low_limit,up_limit = outlier_thresholds(df, "price")
 print("Low Limit : {0}  Up Limit : {1}".format(low_limit,up_limit))
 
@@ -63,7 +63,7 @@ has_outliers(df, ["price"])
 #Çıktı = price  :  77 outliers
 
 
-#Aykırı değerlerin veri setinden uzaklaştırılması.
+# Aykırı değerlerin veri setinden uzaklaştırılması.
 def remove_outliers(dataframe, numeric_columns):
     for variable in numeric_columns:
         low_limit, up_limit = outlier_thresholds(dataframe, variable)
@@ -77,7 +77,7 @@ df.shape #(3371, 2)
 
 
 ############################
-# AB Testing (Bağımsız İki Örneklem T Testi)
+# AB Testi (Bağımsız İki Örneklem T Testi)
 ############################
 
 ############################
@@ -86,6 +86,7 @@ df.shape #(3371, 2)
 
 # 1.1 Normallik Varsayımı
 # 1.2 Varyans Homojenliği
+
 ############################
 # 1.1 Normallik Varsayımı
 ############################
@@ -112,10 +113,10 @@ for category in df["category_id"].unique():
 #675201 ->  Test statistic = 0.6382, p-Value = 0.0000 H0 RED.
 #201436 ->  Test statistic = 0.6190, p-Value = 0.0000 H0 RED.
 
-## p-value < ise 0.05'ten HO RED. Normallik varsayımı sağlanmadı bu nedenle mannwhitneyu testi (non-parametrik test) uygulayacağız.
+# p-value < ise 0.05'ten HO RED. Normallik varsayımı sağlanmadı bu nedenle mannwhitneyu testi (non-parametrik test) uygulayacağız.
 
 
-#Kategori kombinasyonlarının oluşturulması.
+# Kategori kombinasyonlarının oluşturulması.
 cat_com = []
 for x in itertools.combinations(df["category_id"].unique(),2):
     cat_com.append(x)
@@ -142,7 +143,7 @@ result_df[result_df["H0"] == "H0 REDDEDİLEMEZ."]
 
 df.groupby("category_id").agg({"price":"mean"})
 
-#Benzer kategoriler seçildi.
+# Benzerlik gösteren kategoriler seçildi.
 signif_cat = [361254,874521,675201,201436]
 sum = 0
 for i in signif_cat:
@@ -152,7 +153,7 @@ PRICE = sum/4
 
 print("PRICE :{%.4f}"%PRICE)
 
-#Seçilen benzer kategorilerin fiyat listesi.
+# Seçilen benzer kategorilerin fiyat listesi.
 prices = []
 for category in signif_cat:
     for i in df.loc[df["category_id"]== category,"price"]:
@@ -162,20 +163,20 @@ for category in signif_cat:
 
 print("Esnek Fiyat Aralığı: ", sms.DescrStatsW(prices).tconfint_mean())
 
-#Esnek Fiyat Aralığı:  (36.7109597897918, 38.17576299427283)
+# ÇIKTI : Esnek Fiyat Aralığı:  (36.7109597897918, 38.17576299427283)
 
 
-#Ürün Gelirlerinin Simüle Edilmesi:
+# Ürün Gelirlerinin Simüle Edilmesi:
 
-#Güven aralığının min ve max değerlerinden elde edilebilecek gelirleri hesaplayalım.
-#MİN değerine göre
+# Güven aralığının min ve max değerlerinden elde edilebilecek gelirleri hesaplayalım.
+# MİN değerine göre
 freq = len(df[df["price"]>=37.09238177238653])
 income = freq * 37.09238177238653
 print("Beklenen Gelir: ", income)
 
 # Beklenen Gelir:  37611.67511719994
 
-#MAX değerine göre
+# MAX değerine göre
 freq = len(df[df["price"]>=38.17576299427283])
 income = freq * 38.17576299427283
 print("Beklenen Gelir: ",income)
@@ -183,7 +184,7 @@ print("Beklenen Gelir: ",income)
 # Beklenen Gelir:  35388.93229569092
 
 
-#ÖZET
-#Yapılan testler sonucu ürün kategorileri arasında istatistiksel bir farklılık olmadığına karar verildi.
-#Tüm ürün kategorilerinde normallik varsayımı testinde H0:RED sonucunu aldık. Bu nedenle non-parametrik (bağımsız iki örneklem t testi) uygulandı.
-#Benzer kategoriler seçildi ve bunlar baza alınarak güven aralıkları oluşturuldu. Beklenen fiyatlar güven aralığına göre simüle edildi.
+# ÖZET
+# Yapılan testler sonucu ürün kategorileri arasında istatistiksel bir farklılık olmadığına karar verildi.
+# Tüm ürün kategorilerinde normallik varsayımı testinde H0:RED sonucunu aldık. Bu nedenle non-parametrik (bağımsız iki örneklem t testi) uygulandı.
+# Benzer kategoriler seçildi ve bunlar baza alınarak güven aralıkları oluşturuldu. Beklenen fiyatlar güven aralığına göre simüle edildi.
