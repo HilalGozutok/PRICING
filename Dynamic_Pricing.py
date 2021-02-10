@@ -6,7 +6,7 @@
 # 1.Veri Hazırlama
 ############################################
 
-#Gerekli kütüphaneler import edildi.
+# Gerekli kütüphaneler import edildi.
 import pandas as pd
 import itertools
 import statsmodels.stats.api as sms
