@@ -3,6 +3,6 @@ Bir oyun şirketi bir oyununda kullanıcılarına item satın alımları için h
 
 Bu projede 
 * Item fiyatlarının kategorilere göre farklılık gösterip göstermediği,
-* İlk soruya bağlı olarak item'ın fiyatının ne olması gerektiği,
+* İlk maddeye bağlı olarak item'ın fiyatının ne olması gerektiği,
 * Fiyat konusunda "hareket edebilir olmak" istenmektedir. Fiyat stratejisi için karar destek sistemi oluşturulması,
 * Olası fiyat değişiklikleri için item satın alımlarının ve gelirlerinin simüle edilmesi gibi konular incelenmiştir.
